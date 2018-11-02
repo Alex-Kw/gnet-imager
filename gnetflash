@@ -1,0 +1,55 @@
+#!/bin/bash
+
+#skate323k137
+#OPEN SOURCE GNET IMAGER FOR LINUX
+
+#Set device path
+# MAKE THIS OPTIONAL? ADD DETECTION FOR CF TYPE MEDIA?
+device=/dev/sdb
+
+#First and only CLI argument should be the game image itself, non CHD (raw).
+if [ -z $1 ] 
+then
+echo "Please provide a game name! exiting"
+exit 1
+else
+echo "Flashing $1 to $device"
+fi
+
+#check for mounted partition 
+# Expand this to check for more than 1 partition in existence.
+if [ -b "$device"1 ]
+then
+echo "unmounting $device1"
+umount "$device"1
+else
+echo "device is unmounted, proceeding."
+fi
+
+#check for card itself. #doesn't work. /dev/sdb exists regardless
+#if [ -b "$device" ]
+#then
+#echo "card is present. Proceeding with flash."
+#else
+#echo "No card found. Exiting"
+#fi
+
+#prompt to erase the card.
+echo "Erase first? (recommended). y/n (or ctrl-c to abort flash)"
+read erasecard
+
+if [ $erasecard == "y" ]
+then 
+echo "Erasing card. THIS WILL TAKE A WHILE. BE PATIENT."
+dd if=/dev/zero of=$device
+else
+echo "Not erasing card. Proceeding anyway"
+fi
+
+sleep 5s
+
+# final flash, consider another method which shows progress.
+echo "writing card. THIS WILL TAKE A WHILE. BE PATIENT"
+dd if=$1 of=$device
+
+echo "Done. Have a nice day :)"
