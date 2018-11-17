@@ -16,7 +16,9 @@ else
 echo "Flashing $1 to $device"
 fi
 
-#check for mounted partition 
+#Function to check for mounted partition 
+unmount ()
+{
 # Expand this to check for more than 1 partition in existence.
 if [ -b "$device"1 ]
 then
@@ -25,6 +27,7 @@ umount "$device"1
 else
 echo "device is unmounted, proceeding."
 fi
+}
 
 #check for card itself. #doesn't work. /dev/sdb exists regardless
 #if [ -b "$device" ]
@@ -34,6 +37,9 @@ fi
 #echo "No card found. Exiting"
 #fi
 
+# unmount
+unmount
+
 #prompt to erase the card.
 echo "Erase first? (recommended). y/n (or ctrl-c to abort flash)"
 read erasecard
@@ -41,6 +47,7 @@ read erasecard
 if [ $erasecard == "y" ]
 then 
 echo "Erasing card. THIS WILL TAKE A WHILE. BE PATIENT."
+unmount #error checking, or if card was swapped during erase prompt
 dd if=/dev/zero of=$device
 else
 echo "Not erasing card. Proceeding anyway"
